@@ -1,5 +1,3 @@
-import { auditLog, runtimeConfig } from "../config.ts";
-
 export type CartLine = {
   productId: string;
   unitPrice: number;
@@ -7,17 +5,19 @@ export type CartLine = {
   lineTotal?: number;
 };
 
-// Intentionally impure: this function reads globals, mutates its argument and logs.
-export function calculateTotal(lines: CartLine[]): number {
+// Чиста функція: приймає дані і конфіг явно, не мутує вхідні масиви, не пише в глобальний лог
+export function calculateTotal(
+  lines: CartLine[],
+  config: { taxRate: number; discountPercent: number }
+): number {
   let subtotal = 0;
 
   for (const line of lines) {
-    line.lineTotal = line.unitPrice * line.quantity;
-    subtotal += line.lineTotal;
+    // Створюємо нове значення для розрахунку, не змінюючи оригінальний об'єкт line
+    subtotal += line.unitPrice * line.quantity;
   }
 
-  const discounted = subtotal * (1 - runtimeConfig.discountPercent / 100);
-  const total = Number((discounted * (1 + runtimeConfig.taxRate)).toFixed(2));
-  auditLog.push(`total_calculated:${total}`);
+  const discounted = subtotal * (1 - config.discountPercent / 100);
+  const total = Number((discounted * (1 + config.taxRate)).toFixed(2));
   return total;
 }
