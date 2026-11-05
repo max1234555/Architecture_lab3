@@ -22,3 +22,21 @@
 
 **Modules that should not change:**
 - `src/checkout/CheckoutController.ts` (публічний контракт входу залишається стабільним, контролер не повинен знати про деталі конкретного провайдера).
+
+## Actual impact (заповнено після реалізації)
+
+**Actual files changed:**
+- `src/shared/calculateTotal.ts` (зроблено чистою функцією)
+- `src/payments/paymentStatuses.ts` (створено єдиний мапер нормалізованих статусів)
+- `src/payments/internal/StripeClient.ts` (прибрано зайві залежності, додано обробку processing)
+- `src/payments/public/PaymentsService.ts` (створено публічний контракт платежів)
+- `src/inventory/StockRepository.ts` (перенесено ownership залишків та реалізовано метод `reserve`)
+- `src/orders/OrderService.ts` (прибрано прямі маніпуляції зі складом та Stripe)
+- `src/checkout/CheckoutController.ts` (передано конфіг у чисту функцію розрахунку)
+- Видалено дубльовані файли `mapPaymentStatus.ts` з папок orders, notifications та reports.
+- Додано новий тестовий файл `tests/architecture.features.test.ts`.
+
+## Actual impact (заповнено після реалізації)
+
+**Difference from prediction and explanation:**
+Прогноз повністю збігся з реальністю. Зміни вдалося локалізувати в межах відповідних модулів (`Inventory`, `Payments`), залишивши публічний інтерфейс контролера та старі функціональні тести повністю незмінними.
